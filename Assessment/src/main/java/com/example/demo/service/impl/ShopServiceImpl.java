@@ -1,6 +1,7 @@
 package com.example.demo.service.impl;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
@@ -70,6 +71,13 @@ public class ShopServiceImpl implements ShopService {
 		shop.setCustomers(shopDTO.getCustomers());
 		Shop updatedShop = shopRepo.save(shop);
 		return mapToDTO(updatedShop);
+	}
+
+	@Override
+	public void deletePostById(int id) {
+		// TODO Auto-generated method stub
+		Optional<Shop> shop = shopRepo.findById(id);
+        shopRepo.delete(new Shop());
 	}
 
 }

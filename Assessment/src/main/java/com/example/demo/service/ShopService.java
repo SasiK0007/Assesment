@@ -10,4 +10,5 @@ public interface ShopService {
 	List<ShopDTO>getAllShops();
 	ShopDTO getShopById(int id);
 	ShopDTO updateShop(ShopDTO shopDTO,int id);
+	void deletePostById(int id);
 }
