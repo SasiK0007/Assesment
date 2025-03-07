@@ -4,17 +4,20 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.apache.catalina.User;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.dtos.ShopDTO;
 import com.example.demo.entities.Shop;
+import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.repos.ShopRepo;
 import com.example.demo.service.ShopService;
+
 @Service
 public class ShopServiceImpl implements ShopService {
 
 	private ShopRepo shopRepo;
-	
+
 	public ShopServiceImpl(ShopRepo shopRepo) {
 		this.shopRepo = shopRepo;
 	}
@@ -38,6 +41,7 @@ public class ShopServiceImpl implements ShopService {
 		shopDTO.setShopStatus(shop.getShopStatus());
 		return shopDTO;
 	}
+
 	private Shop mapTOEntity(ShopDTO shopDTO) {
 		Shop shop = new Shop();
 		shop.setCustomers(shopDTO.getCustomers());
@@ -52,32 +56,36 @@ public class ShopServiceImpl implements ShopService {
 	@Override
 	public List<ShopDTO> getAllShops() {
 		// TODO Auto-generated method stub
-		List<Shop>shop = shopRepo.findAll();
-		return shop.stream().map(shp->mapToDTO(shp)).collect(Collectors.toList());
+		List<Shop> shop = shopRepo.findAll();
+		return shop.stream().map(shp -> mapToDTO(shp)).collect(Collectors.toList());
 	}
 
 	@Override
 	public ShopDTO getShopById(int id) {
 		// TODO Auto-generated method stub
-		 Shop ax = shopRepo.findById(id).orElse(null);
-		 return mapToDTO(ax);
-		
+		Shop ax = shopRepo.findById(id).orElse(null);
+		return mapToDTO(ax);
+
 	}
 
 	@Override
 	public ShopDTO updateShop(ShopDTO shopDTO, int id) {
 		// TODO Auto-generated method stub
-		Shop shop = shopRepo.findById(id).orElseThrow(null);
-		shop.setCustomers(shopDTO.getCustomers());
-		Shop updatedShop = shopRepo.save(shop);
-		return mapToDTO(updatedShop);
+		Shop shopUpdate = shopRepo.findById(id).orElseThrow(()-> new ResourceNotFoundException("Shop", "id", id));
+		shopUpdate.setCustomers(shopDTO.getCustomers());
+		shopUpdate.setLeaseStatus(shopDTO.getLeaseStatus());
+		Shop finalUpdate = shopRepo.save(shopUpdate);
+		return mapToDTO(finalUpdate);
 	}
 
 	@Override
-	public void deletePostById(int id) {
+	public void delete(int id) {
 		// TODO Auto-generated method stub
-		Optional<Shop> shop = shopRepo.findById(id);
-        shopRepo.delete(new Shop());
+		Shop shop = shopRepo.findById(id).orElseThrow(()-> new ResourceNotFoundException("Shop", "id", id));
+		shopRepo.delete(shop);
 	}
+
+	
+
 
 }

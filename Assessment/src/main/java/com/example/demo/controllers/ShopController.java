@@ -3,6 +3,7 @@ package com.example.demo.controllers;
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -36,14 +37,14 @@ public class ShopController {
 		return new ResponseEntity<ShopDTO>(shopService.getShopById(id),HttpStatus.ACCEPTED);
 	}
 	@PutMapping("/api/shop/update/{id}")
-	public ResponseEntity<ShopDTO>updateShopById(@RequestBody ShopDTO shopDTO,@PathVariable("id")int id){
-		return new ResponseEntity<ShopDTO>(shopService.updateShop(shopDTO, id),HttpStatus.ACCEPTED);
+	public ResponseEntity<ShopDTO>updateShopById(@RequestBody ShopDTO shopDTO,@PathVariable(name = "id")int id){
+		ShopDTO dto = shopService.updateShop(shopDTO, id);
+		return new ResponseEntity<ShopDTO>(dto,HttpStatus.ACCEPTED);
 	}
-	@DeleteMapping("/{id}")
-    public ResponseEntity<String> deletePost(@PathVariable(name = "id") int id){
 
-        shopService.deletePostById(id);
-
-        return new ResponseEntity<>("Post entity deleted successfully.", HttpStatus.OK);
-    }
+	@DeleteMapping("/api/shop/delete/{id}")
+	public ResponseEntity<String>performDelete(@PathVariable("id")int id){
+		shopService.delete(id);
+		return new ResponseEntity<String>("success!",HttpStatus.OK);
+	}
 }
